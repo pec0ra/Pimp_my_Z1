@@ -220,5 +220,25 @@ If you really want to apply such a low brightness value, please use the color sl
     <string name="frequency_table">Frequency table</string>
     <string name="pvs_speed">PVS Table:</string>
     <string name="freq_table">Frequency Table:</string>
+    <string name="fast_hotplug_number_of_cores">Number of cores</string>
+    <string name="fast_hotplug_number_of_cores_text">Defines the minimum and maximum number of cores on screen on.</string>
+    <string name="fast_hotplug_number_of_cores_min">Minimum</string>
+    <string name="fast_hotplug_number_of_cores_max">Maximum</string>
+    <string name="fast_hotplug_boost_duration">Boost duration</string>
+    <string name="fast_hotplug_boost_duration_text">Time after the screen is touched in which there is no delay to plug in the second core.</string>
+    <string name="fast_hotplug_threshold_to_boost">Threshold to boost</string>
+    <string name="fast_hotplug_threshold_to_boost_text">Threshold to plug the second core in the boost delay</string>
+    <string name="fast_hotplug_idle_threshold"></string>
+    <string name="fast_hotplug_idle_threshold_text"></string>
+    <string name="fast_hotplug_screen_off_singlecore"></string>
+    <string name="fast_hotplug_screen_off_singlecore_text"></string>
+    <string name="fast_hotplug_thresholds_in"></string>
+    <string name="fast_hotplug_thresholds_in_text"></string>
+    <string name="fast_hotplug_delays_in"></string>
+    <string name="fast_hotplug_delays_in_text"></string>
+    <string name="fast_hotplug_thresholds_out"></string>
+    <string name="fast_hotplug_thresholds_out_text"></string>
+    <string name="fast_hotplug_delays_out"></string>
+    <string name="fast_hotplug_delays_out_text"></string>
 
 </resources>

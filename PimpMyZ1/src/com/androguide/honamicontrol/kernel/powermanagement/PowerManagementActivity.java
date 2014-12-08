@@ -46,12 +46,12 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
 
     private int spinnerCounter = 0, ecoCoresCounter = 0, alucardCoresCounter = 0, hotplugCounter = 0;
     private Boolean isIntelliPlugOn;
-    private LinearLayout mCardIntelliEco, mCardIntelliCores, mCardAlucardCores;
+    private LinearLayout mCardIntelliEco, mCardIntelliCores, mCardAlucardCores, mCardFastPlugNumberCores, mCardFastBoostDuration, mCardFastThresholdBoost;
     private Spinner mEcoCoresSpinner;
     private Boolean hasIntelliPlug = false;
     private Boolean hasAlucardPlug = false;
     private Boolean hasMsmMpdecision = false;
-    private Boolean hasSmartHotplug = false;
+    private Boolean hasFastHotplug = false;
     private ArrayList<Integer> driverNumbers = new ArrayList<Integer>();
 
     @Override
@@ -66,6 +66,9 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
         mCardIntelliEco = (LinearLayout) findViewById(R.id.card_intelliplug_eco_mode);
         mCardIntelliCores = (LinearLayout) findViewById(R.id.card_intelliplug_eco_cores);
         mCardAlucardCores = (LinearLayout) findViewById(R.id.card_alucard_cores);
+        mCardFastPlugNumberCores = (LinearLayout) findViewById(R.id.card_fast_hotplug_number_of_cores);
+        mCardFastBoostDuration = (LinearLayout) findViewById(R.id.card_fast_hotplug_boost_duration);
+        mCardFastThresholdBoost = (LinearLayout) findViewById(R.id.card_fast_hotplug_threshold_to_boost);
 
         // Sched MC
         if (Helpers.doesFileExist(SCHED_MC_POWER_SAVINGS)) {
@@ -102,7 +105,7 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
         int intelliState = 0;
         int alucardState = 0;
 	int msmState = 0;
-	int smartState = 0;
+	int fastState = 0;
 
         try {
             if (Helpers.doesFileExist(INTELLI_PLUG_TOGGLE)) {
@@ -126,10 +129,10 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
 		driverNumbers.add(3);
             }
 
-            if (Helpers.doesFileExist(SMART_HOTPLUG_TOGGLE)) {
-                hasSmartHotplug = true;
-                smartState = Integer.parseInt(CPUHelper.readOneLineNotRoot(SMART_HOTPLUG_TOGGLE));
-                availableDrivers.add("Smart Hotplug");
+            if (Helpers.doesFileExist(FAST_HOTPLUG_TOGGLE)) {
+                hasFastHotplug = true;
+                fastState = Integer.parseInt(CPUHelper.readOneLineNotRoot(FAST_HOTPLUG_TOGGLE));
+                availableDrivers.add("Fast Hotplug");
 		driverNumbers.add(4);
             }
 
@@ -137,11 +140,11 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
             hotplugDriverSpinner.setAdapter(hotplugAdapter);
 
             /** If the kernel doesn't have intelliplug nor alucard hotplug */
-            if (!hasAlucardPlug && !hasIntelliPlug && !hasMsmMpdecision && !hasSmartHotplug) {
+            if (!hasAlucardPlug && !hasIntelliPlug && !hasMsmMpdecision && !hasFastHotplug) {
                 // then default to mpdecision
                 hotplugDriverSpinner.setSelection(0);
 
-            } else if (hasSmartHotplug && smartState == 1) {
+            } else if (hasFastHotplug && fastState == 1) {
 
                     hotplugDriverSpinner.setSelection(driverNumbers.indexOf(4));
 
@@ -183,8 +186,8 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
 					CMDProcessor.runSuCommand("echo 0 > " + ALUCARD_HOTPLUG_TOGGLE);
 				if(hasMsmMpdecision)
 					CMDProcessor.runSuCommand("echo 0 > " + MSM_MPDECISION_TOGGLE);
-				if(hasSmartHotplug)
-					CMDProcessor.runSuCommand("echo 0 > " + SMART_HOTPLUG_TOGGLE);
+				if(hasFastHotplug)
+					CMDProcessor.runSuCommand("echo 0 > " + FAST_HOTPLUG_TOGGLE);
 
 				CMDProcessor.runSuCommand("start mpdecision");
 
@@ -201,8 +204,8 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
 					CMDProcessor.runSuCommand("echo 0 > " + ALUCARD_HOTPLUG_TOGGLE);
 				if(hasMsmMpdecision)
 					CMDProcessor.runSuCommand("echo 0 > " + MSM_MPDECISION_TOGGLE);
-				if(hasSmartHotplug)
-					CMDProcessor.runSuCommand("echo 0 > " + SMART_HOTPLUG_TOGGLE);
+				if(hasFastHotplug)
+					CMDProcessor.runSuCommand("echo 0 > " + FAST_HOTPLUG_TOGGLE);
 				CMDProcessor.runSuCommand("stop mpdecision");
 				CMDProcessor.runSuCommand("echo 1 > " + INTELLI_PLUG_TOGGLE);
 			} else hotplugCounter++;
@@ -218,8 +221,8 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
 					CMDProcessor.runSuCommand("echo 0 > " + INTELLI_PLUG_TOGGLE);
 				if(hasMsmMpdecision)
 					CMDProcessor.runSuCommand("echo 0 > " + MSM_MPDECISION_TOGGLE);
-				if(hasSmartHotplug)
-					CMDProcessor.runSuCommand("echo 0 > " + SMART_HOTPLUG_TOGGLE);
+				if(hasFastHotplug)
+					CMDProcessor.runSuCommand("echo 0 > " + FAST_HOTPLUG_TOGGLE);
 				CMDProcessor.runSuCommand("stop mpdecision");
 				CMDProcessor.runSuCommand("echo 1 > " + ALUCARD_HOTPLUG_TOGGLE);
 			} else hotplugCounter++;
@@ -234,8 +237,8 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
 					CMDProcessor.runSuCommand("echo 0 > " + INTELLI_PLUG_TOGGLE);
 				if(hasAlucardPlug)
 					CMDProcessor.runSuCommand("echo 0 > " + ALUCARD_HOTPLUG_TOGGLE);
-				if(hasSmartHotplug)
-					CMDProcessor.runSuCommand("echo 0 > " + SMART_HOTPLUG_TOGGLE);
+				if(hasFastHotplug)
+					CMDProcessor.runSuCommand("echo 0 > " + FAST_HOTPLUG_TOGGLE);
 				CMDProcessor.runSuCommand("stop mpdecision");
 				CMDProcessor.runSuCommand("echo 1 > " + MSM_MPDECISION_TOGGLE);
 
@@ -246,6 +249,9 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
 			mCardIntelliEco.setVisibility(View.GONE);
 			mCardIntelliCores.setVisibility(View.GONE);
 			mCardAlucardCores.setVisibility(View.GONE);
+			mCardFastPlugNumberCores.setVisibility(View.VISIBLE);
+			mCardFastBoostDuration.setVisibility(View.VISIBLE);
+			mCardFastThresholdBoost.setVisibility(View.VISIBLE);
 			isIntelliPlugOn = false;
 			if (hotplugCounter > 0) {
 				if(hasIntelliPlug)
@@ -255,7 +261,7 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
 				if(hasMsmMpdecision)
 					CMDProcessor.runSuCommand("echo 0 > " + MSM_MPDECISION_TOGGLE);
 				CMDProcessor.runSuCommand("stop mpdecision");
-				CMDProcessor.runSuCommand("echo 1 > " + SMART_HOTPLUG_TOGGLE);
+				CMDProcessor.runSuCommand("echo 1 > " + FAST_HOTPLUG_TOGGLE);
 
 			} else hotplugCounter++;
 			break;
