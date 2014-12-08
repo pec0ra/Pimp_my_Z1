@@ -48,6 +48,11 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
     private Boolean isIntelliPlugOn;
     private LinearLayout mCardIntelliEco, mCardIntelliCores, mCardAlucardCores;
     private Spinner mEcoCoresSpinner;
+    private Boolean hasIntelliPlug = false;
+    private Boolean hasAlucardPlug = false;
+    private Boolean hasMsmMpdecision = false;
+    private Boolean hasSmartHotplug = false;
+    private ArrayList<Integer> driverNumbers = new ArrayList<Integer>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,61 +98,67 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
         Spinner hotplugDriverSpinner = (Spinner) findViewById(R.id.hotplug_spinner);
         ArrayList<String> availableDrivers = new ArrayList<String>();
         availableDrivers.add("MPDecision");
-        Boolean hasIntelliPlug = false;
-        Boolean hasAlucardPlug = false;
+	driverNumbers.add(0);
         int intelliState = 0;
         int alucardState = 0;
+	int msmState = 0;
+	int smartState = 0;
 
         try {
             if (Helpers.doesFileExist(INTELLI_PLUG_TOGGLE)) {
                 hasIntelliPlug = true;
                 intelliState = Integer.parseInt(CPUHelper.readOneLineNotRoot(INTELLI_PLUG_TOGGLE));
                 availableDrivers.add("Intelliplug");
+		driverNumbers.add(1);
             }
 
             if (Helpers.doesFileExist(ALUCARD_HOTPLUG_TOGGLE)) {
                 hasAlucardPlug = true;
                 alucardState = Integer.parseInt(CPUHelper.readOneLineNotRoot(ALUCARD_HOTPLUG_TOGGLE));
                 availableDrivers.add("Alucard Hotplug");
+		driverNumbers.add(2);
+            }
+
+            if (Helpers.doesFileExist(MSM_MPDECISION_TOGGLE)) {
+                hasMsmMpdecision = true;
+                msmState = Integer.parseInt(CPUHelper.readOneLineNotRoot(MSM_MPDECISION_TOGGLE));
+                availableDrivers.add("Msm mpdecision");
+		driverNumbers.add(3);
+            }
+
+            if (Helpers.doesFileExist(SMART_HOTPLUG_TOGGLE)) {
+                hasSmartHotplug = true;
+                smartState = Integer.parseInt(CPUHelper.readOneLineNotRoot(SMART_HOTPLUG_TOGGLE));
+                availableDrivers.add("Smart Hotplug");
+		driverNumbers.add(4);
             }
 
             ArrayAdapter<String> hotplugAdapter = new ArrayAdapter<String>(this, R.layout.spinner_row, availableDrivers);
             hotplugDriverSpinner.setAdapter(hotplugAdapter);
 
             /** If the kernel doesn't have intelliplug nor alucard hotplug */
-            if (!hasAlucardPlug && !hasIntelliPlug) {
+            if (!hasAlucardPlug && !hasIntelliPlug && !hasMsmMpdecision && !hasSmartHotplug) {
                 // then default to mpdecision
                 hotplugDriverSpinner.setSelection(0);
 
-                /** If the kernel has intelliplug but not alucard hotplug */
-            } else if (hasIntelliPlug && !hasAlucardPlug) {
+            } else if (hasSmartHotplug && smartState == 1) {
 
-                if (intelliState == 1) // If intelliplug is on, intelliplug is the current hotplug driver
-                    hotplugDriverSpinner.setSelection(1);
-                else
-                    hotplugDriverSpinner.setSelection(0); // else it's mpdecision
+                    hotplugDriverSpinner.setSelection(driverNumbers.indexOf(4));
 
-                /** If the kernel has alucard hotplug but not intelliplug */
-            } else if (!hasIntelliPlug) {
+            } else if (hasIntelliPlug && intelliState == 1) {
 
-                if (alucardState == 1)
-                    hotplugDriverSpinner.setSelection(2); // if alucard hotplug is on, then it's the current hotplug driver
-                else
-                    hotplugDriverSpinner.setSelection(0); // else it's mpdecision
+                    hotplugDriverSpinner.setSelection(driverNumbers.indexOf(1)); // if intelli plug is on, then it's the current hotplug driver
 
-                /** If the kernel has both intelliplug & alucard hotplug */
+            } else if (hasMsmMpdecision && msmState == 1) {
+
+                    hotplugDriverSpinner.setSelection(driverNumbers.indexOf(3)); // if msm_mpdecision is on, then it's the current hotplug driver
+
+            } else if (hasAlucardPlug && alucardState == 1) {
+
+                    hotplugDriverSpinner.setSelection(driverNumbers.indexOf(2)); // if alucard hotplug is on, then it's the current hotplug driver
+
             } else {
-                if (intelliState == 1 && alucardState == 0) // if intelliplug is on & alucard is off, intelliplug is the current driver
-                    hotplugDriverSpinner.setSelection(1);
-                else if (intelliState == 0 && alucardState == 1) // if alucard is on & intelliplug is off, alucard is the current driver
-                    hotplugDriverSpinner.setSelection(2);
-                else if (intelliState == 0 && alucardState == 0) // if neither alucard or intelliplug is on, mpdecision is the current driver
-                    hotplugDriverSpinner.setSelection(0);
-                else if (intelliState == 1 && alucardState == 1) { // if both alucard & intelliplug are on, notifiy the user and default back to mpdecision
-                    Toast.makeText(this, getString(R.string.multiple_hotplug_drivers_warning), Toast.LENGTH_LONG).show();
-                    hotplugDriverSpinner.setSelection(0);
-                    CMDProcessor.runSuCommand("busybox echo 0 > " + INTELLI_PLUG_TOGGLE + "\nbusybox echo 0 > " + ALUCARD_HOTPLUG_TOGGLE + "\nstart mpdecision");
-                }
+		    hotplugDriverSpinner.setSelection(0);
             }
 
         } catch (Exception e) {
@@ -159,45 +170,98 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
 
                 bootPrefs.edit().putInt("HOTPLUG_DRIVER", pos).commit();
-                switch (pos) {
+                switch (driverNumbers.get(pos)) {
                     case 0:
                         mCardIntelliEco.setVisibility(View.GONE);
                         mCardIntelliCores.setVisibility(View.GONE);
                         mCardAlucardCores.setVisibility(View.GONE);
-                        isIntelliPlugOn = false;
-                        if (hotplugCounter > 0) {
-                            CMDProcessor.runSuCommand("echo 0 > " + INTELLI_PLUG_TOGGLE);
-                            CMDProcessor.runSuCommand("echo 0 > " + ALUCARD_HOTPLUG_TOGGLE);
-                            CMDProcessor.runSuCommand("start mpdecision");
-                        } else hotplugCounter++;
-                        break;
+			isIntelliPlugOn = false;
+			if (hotplugCounter > 0) {
+				if(hasIntelliPlug)
+					CMDProcessor.runSuCommand("echo 0 > " + INTELLI_PLUG_TOGGLE);
+				if(hasAlucardPlug)
+					CMDProcessor.runSuCommand("echo 0 > " + ALUCARD_HOTPLUG_TOGGLE);
+				if(hasMsmMpdecision)
+					CMDProcessor.runSuCommand("echo 0 > " + MSM_MPDECISION_TOGGLE);
+				if(hasSmartHotplug)
+					CMDProcessor.runSuCommand("echo 0 > " + SMART_HOTPLUG_TOGGLE);
 
-                    case 1:
-                        mCardAlucardCores.setVisibility(View.GONE);
-                        mCardIntelliEco.setVisibility(View.VISIBLE);
-                        mCardIntelliCores.setVisibility(View.VISIBLE);
-                        isIntelliPlugOn = true;
-                        if (hotplugCounter > 0) {
-                            CMDProcessor.runSuCommand("echo 0 > " + ALUCARD_HOTPLUG_TOGGLE);
-                            CMDProcessor.runSuCommand("stop mpdecision");
-                            CMDProcessor.runSuCommand("echo 1 > " + INTELLI_PLUG_TOGGLE);
-                        } else hotplugCounter++;
-                        break;
+				CMDProcessor.runSuCommand("start mpdecision");
 
-                    case 2:
-                        mCardIntelliEco.setVisibility(View.GONE);
-                        mCardIntelliCores.setVisibility(View.GONE);
-                        mCardAlucardCores.setVisibility(View.VISIBLE);
-                        isIntelliPlugOn = false;
-                        if (hotplugCounter > 0) {
-                            CMDProcessor.runSuCommand("echo 0 > " + INTELLI_PLUG_TOGGLE);
-                            CMDProcessor.runSuCommand("stop mpdecision");
-                            CMDProcessor.runSuCommand("echo 1 > " + ALUCARD_HOTPLUG_TOGGLE);
                         } else hotplugCounter++;
-                        break;
-                    default:
-                        break;
-                }
+			break;
+
+		    case 1:
+			mCardAlucardCores.setVisibility(View.GONE);
+			mCardIntelliEco.setVisibility(View.VISIBLE);
+			mCardIntelliCores.setVisibility(View.VISIBLE);
+			isIntelliPlugOn = true;
+			if (hotplugCounter > 0) {
+				if(hasAlucardPlug)
+					CMDProcessor.runSuCommand("echo 0 > " + ALUCARD_HOTPLUG_TOGGLE);
+				if(hasMsmMpdecision)
+					CMDProcessor.runSuCommand("echo 0 > " + MSM_MPDECISION_TOGGLE);
+				if(hasSmartHotplug)
+					CMDProcessor.runSuCommand("echo 0 > " + SMART_HOTPLUG_TOGGLE);
+				CMDProcessor.runSuCommand("stop mpdecision");
+				CMDProcessor.runSuCommand("echo 1 > " + INTELLI_PLUG_TOGGLE);
+			} else hotplugCounter++;
+			break;
+
+		    case 2:
+			mCardIntelliEco.setVisibility(View.GONE);
+			mCardIntelliCores.setVisibility(View.GONE);
+			mCardAlucardCores.setVisibility(View.VISIBLE);
+			isIntelliPlugOn = false;
+			if (hotplugCounter > 0) {
+				if(hasIntelliPlug)
+					CMDProcessor.runSuCommand("echo 0 > " + INTELLI_PLUG_TOGGLE);
+				if(hasMsmMpdecision)
+					CMDProcessor.runSuCommand("echo 0 > " + MSM_MPDECISION_TOGGLE);
+				if(hasSmartHotplug)
+					CMDProcessor.runSuCommand("echo 0 > " + SMART_HOTPLUG_TOGGLE);
+				CMDProcessor.runSuCommand("stop mpdecision");
+				CMDProcessor.runSuCommand("echo 1 > " + ALUCARD_HOTPLUG_TOGGLE);
+			} else hotplugCounter++;
+
+		    case 3:
+			mCardIntelliEco.setVisibility(View.GONE);
+			mCardIntelliCores.setVisibility(View.GONE);
+			mCardAlucardCores.setVisibility(View.GONE);
+			isIntelliPlugOn = false;
+			if (hotplugCounter > 0) {
+				if(hasIntelliPlug)
+					CMDProcessor.runSuCommand("echo 0 > " + INTELLI_PLUG_TOGGLE);
+				if(hasAlucardPlug)
+					CMDProcessor.runSuCommand("echo 0 > " + ALUCARD_HOTPLUG_TOGGLE);
+				if(hasSmartHotplug)
+					CMDProcessor.runSuCommand("echo 0 > " + SMART_HOTPLUG_TOGGLE);
+				CMDProcessor.runSuCommand("stop mpdecision");
+				CMDProcessor.runSuCommand("echo 1 > " + MSM_MPDECISION_TOGGLE);
+
+			} else hotplugCounter++;
+			break;
+
+		    case 4:
+			mCardIntelliEco.setVisibility(View.GONE);
+			mCardIntelliCores.setVisibility(View.GONE);
+			mCardAlucardCores.setVisibility(View.GONE);
+			isIntelliPlugOn = false;
+			if (hotplugCounter > 0) {
+				if(hasIntelliPlug)
+					CMDProcessor.runSuCommand("echo 0 > " + INTELLI_PLUG_TOGGLE);
+				if(hasAlucardPlug)
+					CMDProcessor.runSuCommand("echo 0 > " + ALUCARD_HOTPLUG_TOGGLE);
+				if(hasMsmMpdecision)
+					CMDProcessor.runSuCommand("echo 0 > " + MSM_MPDECISION_TOGGLE);
+				CMDProcessor.runSuCommand("stop mpdecision");
+				CMDProcessor.runSuCommand("echo 1 > " + SMART_HOTPLUG_TOGGLE);
+
+			} else hotplugCounter++;
+			break;
+		    default:
+			break;
+		}
             }
 
             @Override

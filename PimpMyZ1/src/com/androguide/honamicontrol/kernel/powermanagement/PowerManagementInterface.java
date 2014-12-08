@@ -29,6 +29,7 @@ public interface PowerManagementInterface {
     public static final String ALUCARD_HOTPLUG_TOGGLE = "/sys/kernel/alucard_hotplug/hotplug_enable";
     public static final String ALUCARD_HOTPLUG_CORES = "/sys/kernel/alucard_hotplug/maxcoreslimit";
     public static final String MSM_MPDECISION_TOGGLE = "/sys/kernel/msm_mpdecision/conf/enabled";
+    public static final String SMART_HOTPLUG_TOGGLE = "/sys/module/fast_hotplug/parameters/fast_hotplug_enabled";
     public static final String POWER_SUSPEND_TOGGLE = "/sys/kernel/power_suspend/power_suspend_mode";
 }
 
