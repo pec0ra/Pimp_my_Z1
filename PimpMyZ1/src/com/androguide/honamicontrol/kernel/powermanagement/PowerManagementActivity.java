@@ -169,7 +169,6 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
 
-                bootPrefs.edit().putInt("HOTPLUG_DRIVER", pos).commit();
                 switch (driverNumbers.get(pos)) {
                     case 0:
                         mCardIntelliEco.setVisibility(View.GONE);
@@ -267,6 +266,8 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
 		    default:
 			break;
 		}
+
+		bootPrefs.edit().putInt("HOTPLUG_DRIVER", driverNumbers.get(pos)).commit();
             }
 
             @Override
