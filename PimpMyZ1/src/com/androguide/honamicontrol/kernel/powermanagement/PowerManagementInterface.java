@@ -35,6 +35,19 @@ public interface PowerManagementInterface {
     public static final String FAST_HOTPLUG_BOOST_DURATION = "/sys/module/fast_hotplug/parameters/boost_duration";
     public static final String FAST_HOTPLUG_THRESHOLD_TO_BOOST = "/sys/module/fast_hotplug/parameters/threshold_to_boost";
     public static final String FAST_HOTPLUG_IDLE_THRESHOLD = "/sys/module/fast_hotplug/parameters/idle_threshold";
+    public static final String FAST_HOTPLUG_SCREEN_OFF_SINGLECORE = "/sys/module/fast_hotplug/parameters/screen_off_singlecore";
+    public static final String FAST_HOTPLUG_IN_THRESHOLD_1 = "/sys/module/fast_hotplug/parameters/plug_in_core_1_threshold";
+    public static final String FAST_HOTPLUG_IN_THRESHOLD_2 = "/sys/module/fast_hotplug/parameters/plug_in_core_2_threshold";
+    public static final String FAST_HOTPLUG_IN_THRESHOLD_3 = "/sys/module/fast_hotplug/parameters/plug_in_core_3_threshold";
+    public static final String FAST_HOTPLUG_IN_DELAY_1 = "/sys/module/fast_hotplug/parameters/plug_in_core_1_delay";
+    public static final String FAST_HOTPLUG_IN_DELAY_2 = "/sys/module/fast_hotplug/parameters/plug_in_core_2_delay";
+    public static final String FAST_HOTPLUG_IN_DELAY_3 = "/sys/module/fast_hotplug/parameters/plug_in_core_3_delay";
+    public static final String FAST_HOTPLUG_OUT_THRESHOLD_1 = "/sys/module/fast_hotplug/parameters/plug_out_core_1_threshold";
+    public static final String FAST_HOTPLUG_OUT_THRESHOLD_2 = "/sys/module/fast_hotplug/parameters/plug_out_core_2_threshold";
+    public static final String FAST_HOTPLUG_OUT_THRESHOLD_3 = "/sys/module/fast_hotplug/parameters/plug_out_core_3_threshold";
+    public static final String FAST_HOTPLUG_OUT_DELAY_1 = "/sys/module/fast_hotplug/parameters/plug_out_core_1_delay";
+    public static final String FAST_HOTPLUG_OUT_DELAY_2 = "/sys/module/fast_hotplug/parameters/plug_out_core_2_delay";
+    public static final String FAST_HOTPLUG_OUT_DELAY_3 = "/sys/module/fast_hotplug/parameters/plug_out_core_3_delay";
 //     public static final String FAST_HOTPLUG_ = "/sys/module/fast_hotplug/parameters/";
     public static final String POWER_SUSPEND_TOGGLE = "/sys/kernel/power_suspend/power_suspend_mode";
 }

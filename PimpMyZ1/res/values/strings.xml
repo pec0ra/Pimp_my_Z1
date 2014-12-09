@@ -230,15 +230,18 @@ If you really want to apply such a low brightness value, please use the color sl
     <string name="fast_hotplug_threshold_to_boost_text">Threshold to plug the second core in the boost delay</string>
     <string name="fast_hotplug_idle_threshold">Idle threshold</string>
     <string name="fast_hotplug_idle_threshold_text">When only one core is on and the load is below this threshold, fast hotplug won\'t do any smart calculation</string>
-    <string name="fast_hotplug_screen_off_singlecore"></string>
-    <string name="fast_hotplug_screen_off_singlecore_text"></string>
-    <string name="fast_hotplug_thresholds_in"></string>
-    <string name="fast_hotplug_thresholds_in_text"></string>
-    <string name="fast_hotplug_delays_in"></string>
-    <string name="fast_hotplug_delays_in_text"></string>
-    <string name="fast_hotplug_thresholds_out"></string>
-    <string name="fast_hotplug_thresholds_out_text"></string>
-    <string name="fast_hotplug_delays_out"></string>
-    <string name="fast_hotplug_delays_out_text"></string>
+    <string name="fast_hotplug_screen_off_singlecore">Screen off singlecore</string>
+    <string name="fast_hotplug_screen_off_singlecore_text">Allows only one core to stay online when screen is off</string>
+    <string name="fast_hotplug_thresholds_in">Plug in thresholds</string>
+    <string name="fast_hotplug_thresholds_in_text">Define what is the minimum threshold to plug in each core</string>
+    <string name="fast_hotplug_delays_in">Plug in delays</string>
+    <string name="fast_hotplug_delays_in_text">Defines the number of fast hotplug cycles with load greater than the plug in threshold to wait before pluging in each core</string>
+    <string name="fast_hotplug_thresholds_out">Plug out threshold</string>
+    <string name="fast_hotplug_thresholds_out_text">Define what is the minimum threshold to plug out each core</string>
+    <string name="fast_hotplug_delays_out">Plug out delays</string>
+    <string name="fast_hotplug_delays_out_text">Defines the number of fast hotplug cycles with load greater than the plug in threshold to wait before pluging in each core</string>
+    <string name="fast_hotplug_core1">Core 1</string>
+    <string name="fast_hotplug_core2">Core 2</string>
+    <string name="fast_hotplug_core3">Core 3</string>
 
 </resources>
