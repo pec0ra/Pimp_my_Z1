@@ -301,9 +301,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dip" />
         </LinearLayout>
-	<!--
         <LinearLayout
-            android:id="@+id/card_fast_hotplug_number_of_cores"
+            android:id="@+id/card_fast_hotplug_idle_threshold"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
@@ -314,29 +313,30 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/fast_hotplug_"
+                android:id="@+id/fast_hotplug_idle_threshold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-light"
-                android:text="@string/fast_hotplug_"
+                android:text="@string/fast_hotplug_idle_threshold"
                 android:textColor="@color/kernel_color_2"
                 android:textSize="20sp" />
 
             <TextView
-                android:id="@+id/fast_hotplug__desc"
+                android:id="@+id/fast_hotplug_idle_threshold_desc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:autoLink="all"
                 android:fontFamily="sans-serif-light"
-                android:text="@string/fast_hotplug_"
+                android:text="@string/fast_hotplug_idle_threshold_text"
                 android:textSize="15sp" />
 
             <Spinner
-                android:id="@+id/fast_hotplug_min_cores_spinner"
+                android:id="@+id/fast_hotplug_idle_threshold_spinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dip" />
         </LinearLayout>
+	<!--
         <LinearLayout
             android:id="@+id/card_fast_hotplug_number_of_cores"
             android:layout_width="match_parent"

@@ -44,7 +44,7 @@ import java.util.ArrayList;
 
 public class PowerManagementActivity extends ActionBarActivity implements PowerManagementInterface {
 
-    private int spinnerCounter = 0, ecoCoresCounter = 0, alucardCoresCounter = 0, hotplugCounter = 0;
+    private int spinnerCounter = 0, ecoCoresCounter = 0, alucardCoresCounter = 0, hotplugCounter = 0, minCounter = 0, maxCounter = 0, boostCounter = 0, thresholdBoostCounter = 0, idleCounter = 0;
     private Boolean isIntelliPlugOn;
     private LinearLayout mCardIntelliEco, mCardIntelliCores, mCardAlucardCores, mCardFastPlugNumberCores, mCardFastBoostDuration, mCardFastThresholdBoost;
     private Spinner mEcoCoresSpinner;
@@ -66,9 +66,6 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
         mCardIntelliEco = (LinearLayout) findViewById(R.id.card_intelliplug_eco_mode);
         mCardIntelliCores = (LinearLayout) findViewById(R.id.card_intelliplug_eco_cores);
         mCardAlucardCores = (LinearLayout) findViewById(R.id.card_alucard_cores);
-        mCardFastPlugNumberCores = (LinearLayout) findViewById(R.id.card_fast_hotplug_number_of_cores);
-        mCardFastBoostDuration = (LinearLayout) findViewById(R.id.card_fast_hotplug_boost_duration);
-        mCardFastThresholdBoost = (LinearLayout) findViewById(R.id.card_fast_hotplug_threshold_to_boost);
 
         // Sched MC
         if (Helpers.doesFileExist(SCHED_MC_POWER_SAVINGS)) {
@@ -178,6 +175,7 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
                         mCardIntelliEco.setVisibility(View.GONE);
                         mCardIntelliCores.setVisibility(View.GONE);
                         mCardAlucardCores.setVisibility(View.GONE);
+			hideFastHotplugConfig();
 			isIntelliPlugOn = false;
 			if (hotplugCounter > 0) {
 				if(hasIntelliPlug)
@@ -198,6 +196,7 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
 			mCardAlucardCores.setVisibility(View.GONE);
 			mCardIntelliEco.setVisibility(View.VISIBLE);
 			mCardIntelliCores.setVisibility(View.VISIBLE);
+			hideFastHotplugConfig();
 			isIntelliPlugOn = true;
 			if (hotplugCounter > 0) {
 				if(hasAlucardPlug)
@@ -215,6 +214,7 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
 			mCardIntelliEco.setVisibility(View.GONE);
 			mCardIntelliCores.setVisibility(View.GONE);
 			mCardAlucardCores.setVisibility(View.VISIBLE);
+			hideFastHotplugConfig();
 			isIntelliPlugOn = false;
 			if (hotplugCounter > 0) {
 				if(hasIntelliPlug)
@@ -231,6 +231,7 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
 			mCardIntelliEco.setVisibility(View.GONE);
 			mCardIntelliCores.setVisibility(View.GONE);
 			mCardAlucardCores.setVisibility(View.GONE);
+			hideFastHotplugConfig();
 			isIntelliPlugOn = false;
 			if (hotplugCounter > 0) {
 				if(hasIntelliPlug)
@@ -249,9 +250,7 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
 			mCardIntelliEco.setVisibility(View.GONE);
 			mCardIntelliCores.setVisibility(View.GONE);
 			mCardAlucardCores.setVisibility(View.GONE);
-			mCardFastPlugNumberCores.setVisibility(View.VISIBLE);
-			mCardFastBoostDuration.setVisibility(View.VISIBLE);
-			mCardFastThresholdBoost.setVisibility(View.VISIBLE);
+			showFastHotplugConfig();
 			isIntelliPlugOn = false;
 			if (hotplugCounter > 0) {
 				if(hasIntelliPlug)
@@ -274,6 +273,162 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+
+	// Smart hotplug controls
+	if(Helpers.doesFileExist(FAST_HOTPLUG_TOGGLE)){
+		Spinner fastHotplugMinCoresSpinner = (Spinner) findViewById(R.id.fast_hotplug_min_cores_spinner);
+		Spinner fastHotplugMaxCoresSpinner = (Spinner) findViewById(R.id.fast_hotplug_max_cores_spinner);
+		ArrayList<String> minMaxCores = new ArrayList<String>();
+		minMaxCores.add("1");
+		minMaxCores.add("2");
+		minMaxCores.add("3");
+		minMaxCores.add("4");
+		ArrayAdapter<String> minCoresAdapter = new ArrayAdapter<String>(this, R.layout.spinner_row, minMaxCores);
+		ArrayAdapter<String> maxCoresAdapter = new ArrayAdapter<String>(this, R.layout.spinner_row, minMaxCores);
+		fastHotplugMinCoresSpinner.setAdapter(minCoresAdapter);
+		fastHotplugMaxCoresSpinner.setAdapter(maxCoresAdapter);
+		int minCores = Integer.parseInt(CPUHelper.readOneLineNotRoot(FAST_HOTPLUG_MIN_CORES)) - 1;
+		int maxCores = Integer.parseInt(CPUHelper.readOneLineNotRoot(FAST_HOTPLUG_MAX_CORES)) - 1;
+		if(minCores < 0)
+			minCores = 0;
+		if(minCores > 2)
+			minCores = 2;	
+		fastHotplugMinCoresSpinner.setSelection(minCores);
+		if(maxCores < 0)
+			maxCores = 0;
+		if(maxCores > 3)
+			maxCores = 3;	
+		fastHotplugMaxCoresSpinner.setSelection(maxCores);
+
+		fastHotplugMinCoresSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				int toApply = position + 1;
+				if (minCounter > 0) {
+					Helpers.CMDProcessorWrapper.runSuCommand("busybox echo " + toApply + " > " + FAST_HOTPLUG_MIN_CORES);
+					bootPrefs.edit().putInt("FAST_HOTPLUG_MIN_CORES", toApply).commit();
+				} else {
+					minCounter++;
+				}
+			}
+
+		@Override
+		public void onNothingSelected(AdapterView<?> parent) {
+
+		}
+		});
+		fastHotplugMaxCoresSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				int toApply = position + 1;
+				if (maxCounter > 0) {
+					Helpers.CMDProcessorWrapper.runSuCommand("busybox echo " + toApply + " > " + FAST_HOTPLUG_MAX_CORES);
+					bootPrefs.edit().putInt("FAST_HOTPLUG_MAX_CORES", toApply).commit();
+				} else {
+					maxCounter++;
+				}
+			}
+
+		@Override
+		public void onNothingSelected(AdapterView<?> parent) {
+
+		}
+		});
+
+
+
+		Spinner fastHotplugBoostDuration = (Spinner) findViewById(R.id.fast_hotplug_boost_duration_spinner);
+		ArrayList<String> loadLevels = new ArrayList<String>();
+
+		for(int i = 0; i <= 10000; i+=100){
+			loadLevels.add(String.valueOf(i));
+		}
+		ArrayAdapter<String> boostDurationAdapter = new ArrayAdapter<String>(this, R.layout.spinner_row, loadLevels);
+		fastHotplugBoostDuration.setAdapter(boostDurationAdapter);
+		int boostDuration = Integer.parseInt(CPUHelper.readOneLineNotRoot(FAST_HOTPLUG_BOOST_DURATION)) / 100;
+		if(boostDuration < 0)
+			boostDuration = 0;
+		if(boostDuration > 100)
+			boostDuration = 100;	
+		fastHotplugBoostDuration.setSelection(boostDuration);
+
+		fastHotplugBoostDuration.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				int toApply = position * 100;
+				if (boostCounter > 0) {
+					Helpers.CMDProcessorWrapper.runSuCommand("busybox echo " + toApply + " > " + FAST_HOTPLUG_BOOST_DURATION);
+					bootPrefs.edit().putInt("FAST_HOTPLUG_BOOST_DURATION", toApply).commit();
+				} else {
+					boostCounter++;
+				}
+			}
+
+		@Override
+		public void onNothingSelected(AdapterView<?> parent) {
+
+		}
+		});
+
+		Spinner fastHotplugThresholdToBoost = (Spinner) findViewById(R.id.fast_hotplug_threshold_to_boost_spinner);
+
+		ArrayAdapter<String> thresholdToBoostAdapter = new ArrayAdapter<String>(this, R.layout.spinner_row, loadLevels);
+		fastHotplugThresholdToBoost.setAdapter(thresholdToBoostAdapter);
+		int thresholdBoost = Integer.parseInt(CPUHelper.readOneLineNotRoot(FAST_HOTPLUG_THRESHOLD_TO_BOOST)) / 100;
+		if(thresholdBoost < 0)
+			thresholdBoost = 0;
+		if(thresholdBoost > 100)
+			thresholdBoost = 100;	
+		fastHotplugThresholdToBoost.setSelection(thresholdBoost);
+
+		fastHotplugThresholdToBoost.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				int toApply = position * 100;
+				if (thresholdBoostCounter > 0) {
+					Helpers.CMDProcessorWrapper.runSuCommand("busybox echo " + toApply + " > " + FAST_HOTPLUG_THRESHOLD_TO_BOOST);
+					bootPrefs.edit().putInt("FAST_HOTPLUG_THRESHOLD_TO_BOOST", toApply).commit();
+				} else {
+					thresholdBoostCounter++;
+				}
+			}
+
+		@Override
+		public void onNothingSelected(AdapterView<?> parent) {
+
+		}
+		});
+
+
+		Spinner fastHotplugIdleThreshold = (Spinner) findViewById(R.id.fast_hotplug_idle_threshold_spinner);
+
+		ArrayAdapter<String> idleThresholdAdapter = new ArrayAdapter<String>(this, R.layout.spinner_row, loadLevels);
+		fastHotplugIdleThreshold.setAdapter(idleThresholdAdapter);
+		int idleThreshold = Integer.parseInt(CPUHelper.readOneLineNotRoot(FAST_HOTPLUG_IDLE_THRESHOLD)) / 100;
+		if(idleThreshold < 0)
+			idleThreshold = 0;
+		if(idleThreshold > 100)
+			idleThreshold = 100;	
+		fastHotplugIdleThreshold.setSelection(idleThreshold);
+
+		fastHotplugIdleThreshold.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				int toApply = position * 100;
+				if (idleCounter > 0) {
+					Helpers.CMDProcessorWrapper.runSuCommand("busybox echo " + toApply + " > " + FAST_HOTPLUG_IDLE_THRESHOLD);
+					bootPrefs.edit().putInt("FAST_HOTPLUG_IDLE_THRESHOLD", toApply).commit();
+				} else {
+					idleCounter++;
+				}
+			}
+
+		@Override
+		public void onNothingSelected(AdapterView<?> parent) {
+
+		}
+		});
+	}
 
         // Intelliplug Eco Mode
         if (Helpers.doesFileExist(INTELLI_PLUG_ECO_MODE)) {
@@ -334,7 +489,8 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
 
                 }
             });
-        }
+
+	}
 
         // Alucard eco cores
         if (Helpers.doesFileExist(ALUCARD_HOTPLUG_CORES)) {
@@ -401,4 +557,29 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
         }
         return super.onOptionsItemSelected(item);
     }
+    private void showFastHotplugConfig(){
+	    LinearLayout mCardFastPlugNumberCores, mCardFastBoostDuration, mCardFastThresholdBoost, mCardIdleThreshold;
+
+	    mCardFastPlugNumberCores = (LinearLayout) findViewById(R.id.card_fast_hotplug_number_of_cores);
+	    mCardFastBoostDuration = (LinearLayout) findViewById(R.id.card_fast_hotplug_boost_duration);
+	    mCardFastThresholdBoost = (LinearLayout) findViewById(R.id.card_fast_hotplug_threshold_to_boost);
+	    mCardIdleThreshold = (LinearLayout) findViewById(R.id.card_fast_hotplug_idle_threshold);
+	    mCardFastPlugNumberCores.setVisibility(View.VISIBLE);
+	    mCardFastBoostDuration.setVisibility(View.VISIBLE);
+	    mCardFastThresholdBoost.setVisibility(View.VISIBLE);
+	    mCardIdleThreshold.setVisibility(View.VISIBLE);
+    }
+    private void hideFastHotplugConfig(){
+	    LinearLayout mCardFastPlugNumberCores, mCardFastBoostDuration, mCardFastThresholdBoost, mCardIdleThreshold;
+
+	    mCardFastPlugNumberCores = (LinearLayout) findViewById(R.id.card_fast_hotplug_number_of_cores);
+	    mCardFastBoostDuration = (LinearLayout) findViewById(R.id.card_fast_hotplug_boost_duration);
+	    mCardFastThresholdBoost = (LinearLayout) findViewById(R.id.card_fast_hotplug_threshold_to_boost);
+	    mCardIdleThreshold = (LinearLayout) findViewById(R.id.card_fast_hotplug_idle_threshold);
+	    mCardFastPlugNumberCores.setVisibility(View.GONE);
+	    mCardFastBoostDuration.setVisibility(View.GONE);
+	    mCardFastThresholdBoost.setVisibility(View.GONE);
+	    mCardIdleThreshold.setVisibility(View.GONE);
+	    }
+
 }

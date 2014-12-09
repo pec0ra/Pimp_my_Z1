@@ -34,6 +34,7 @@ public interface PowerManagementInterface {
     public static final String FAST_HOTPLUG_MAX_CORES = "/sys/module/fast_hotplug/parameters/max_cpu_on";
     public static final String FAST_HOTPLUG_BOOST_DURATION = "/sys/module/fast_hotplug/parameters/boost_duration";
     public static final String FAST_HOTPLUG_THRESHOLD_TO_BOOST = "/sys/module/fast_hotplug/parameters/threshold_to_boost";
+    public static final String FAST_HOTPLUG_IDLE_THRESHOLD = "/sys/module/fast_hotplug/parameters/idle_threshold";
 //     public static final String FAST_HOTPLUG_ = "/sys/module/fast_hotplug/parameters/";
     public static final String POWER_SUSPEND_TOGGLE = "/sys/kernel/power_suspend/power_suspend_mode";
 }

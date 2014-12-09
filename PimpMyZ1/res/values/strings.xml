@@ -225,11 +225,11 @@ If you really want to apply such a low brightness value, please use the color sl
     <string name="fast_hotplug_number_of_cores_min">Minimum</string>
     <string name="fast_hotplug_number_of_cores_max">Maximum</string>
     <string name="fast_hotplug_boost_duration">Boost duration</string>
-    <string name="fast_hotplug_boost_duration_text">Time after the screen is touched in which there is no delay to plug in the second core.</string>
+    <string name="fast_hotplug_boost_duration_text">Time (in ms) after the screen is touched in which there is no delay to plug in the second core.</string>
     <string name="fast_hotplug_threshold_to_boost">Threshold to boost</string>
     <string name="fast_hotplug_threshold_to_boost_text">Threshold to plug the second core in the boost delay</string>
-    <string name="fast_hotplug_idle_threshold"></string>
-    <string name="fast_hotplug_idle_threshold_text"></string>
+    <string name="fast_hotplug_idle_threshold">Idle threshold</string>
+    <string name="fast_hotplug_idle_threshold_text">When only one core is on and the load is below this threshold, fast hotplug won\'t do any smart calculation</string>
     <string name="fast_hotplug_screen_off_singlecore"></string>
     <string name="fast_hotplug_screen_off_singlecore_text"></string>
     <string name="fast_hotplug_thresholds_in"></string>
