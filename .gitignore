@@ -30,6 +30,10 @@ proguard/
 .idea/
 .gradle/
 
+# Vim files
+*.swp
+*~
+
 # Project-specific
 PimpMyZ1/build/
 PimpMyZ1/.idea/
@@ -51,3 +55,8 @@ libs/PagerSlidingStrip/build/
 libs/PagerSlidingStrip/.idea/
 libs/PagerSlidingStrip/*.iml
 libs/PagerSlidingStrip/*.idea
+
+PimpMyZ1/project.properties
+libs/CardsUILib/project.properties
+libs/HoloGraphLibrary/project.properties
+libs/PagerSlidingStrip/project.properties
