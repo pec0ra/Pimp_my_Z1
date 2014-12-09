@@ -239,7 +239,7 @@ If you really want to apply such a low brightness value, please use the color sl
     <string name="fast_hotplug_thresholds_out">Plug out threshold</string>
     <string name="fast_hotplug_thresholds_out_text">Define what is the minimum threshold to plug out each core</string>
     <string name="fast_hotplug_delays_out">Plug out delays</string>
-    <string name="fast_hotplug_delays_out_text">Defines the number of fast hotplug cycles with load greater than the plug in threshold to wait before pluging in each core</string>
+    <string name="fast_hotplug_delays_out_text">Defines the number of fast hotplug cycles with load greater than the plug in threshold to wait before pluging out each core</string>
     <string name="fast_hotplug_core1">Core 1</string>
     <string name="fast_hotplug_core2">Core 2</string>
     <string name="fast_hotplug_core3">Core 3</string>

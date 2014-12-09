@@ -526,113 +526,6 @@
                 android:layout_marginTop="2dip" />
         </LinearLayout>
 
-	<!--
-        <LinearLayout
-            android:id="@+id/card_fast_hotplug_number_of_cores"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="16dp"
-            android:padding="8dp"
-            android:background="@drawable/card_background"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/fast_hotplug_"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-light"
-                android:text="@string/fast_hotplug_"
-                android:textColor="@color/kernel_color_2"
-                android:textSize="20sp" />
-
-            <TextView
-                android:id="@+id/fast_hotplug__desc"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:autoLink="all"
-                android:fontFamily="sans-serif-light"
-                android:text="@string/fast_hotplug_"
-                android:textSize="15sp" />
-
-            <Spinner
-                android:id="@+id/fast_hotplug_min_cores_spinner"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dip" />
-        </LinearLayout>
-        <LinearLayout
-            android:id="@+id/card_fast_hotplug_number_of_cores"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="16dp"
-            android:padding="8dp"
-            android:background="@drawable/card_background"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/fast_hotplug_"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-light"
-                android:text="@string/fast_hotplug_"
-                android:textColor="@color/kernel_color_2"
-                android:textSize="20sp" />
-
-            <TextView
-                android:id="@+id/fast_hotplug__desc"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:autoLink="all"
-                android:fontFamily="sans-serif-light"
-                android:text="@string/fast_hotplug_"
-                android:textSize="15sp" />
-
-            <Spinner
-                android:id="@+id/fast_hotplug_min_cores_spinner"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dip" />
-        </LinearLayout>
-        <LinearLayout
-            android:id="@+id/card_fast_hotplug_number_of_cores"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="16dp"
-            android:padding="8dp"
-            android:background="@drawable/card_background"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/fast_hotplug_"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-light"
-                android:text="@string/fast_hotplug_"
-                android:textColor="@color/kernel_color_2"
-                android:textSize="20sp" />
-
-            <TextView
-                android:id="@+id/fast_hotplug__desc"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:autoLink="all"
-                android:fontFamily="sans-serif-light"
-                android:text="@string/fast_hotplug_"
-                android:textSize="15sp" />
-
-            <Spinner
-                android:id="@+id/fast_hotplug_min_cores_spinner"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dip" />
-        </LinearLayout>
--->
 
 
         <LinearLayout
@@ -724,7 +617,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-light"
-                android:text="@string/fast_hotplug_delays_in"
+                android:text="@string/fast_hotplug_delays_out"
                 android:textColor="@color/kernel_color_2"
                 android:textSize="20sp" />
 
