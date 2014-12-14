@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+
+   Copyright (C) 2013  Louis Teboul (a.k.a Androguide)
+
+   admin@pimpmyrom.org  || louisteboul@gmail.com
+   http://pimpmyrom.org || http://androguide.fr
+   71 quai Clémenceau, 69300 Caluire-et-Cuire, FRANCE.
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License along
+   with this program; if not, write to the Free Software Foundation, Inc.,
+   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+-->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:animateLayoutChanges="true">
+
+    <com.fima.cardsui.views.CardUI
+        android:id="@+id/cardsui"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"/>
+
+
+        <LinearLayout
+            android:id="@+id/card_enable_show_nr"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:padding="8dp"
+            android:background="@drawable/card_background"
+            android:orientation="vertical">
+
+	    <TextView
+		    android:id="@+id/enable_show_nr"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:fontFamily="sans-serif-light"
+		    android:text="@string/enable_show_nr"
+		    android:textColor="@color/kernel_color_2"
+		    android:textSize="20sp" />
+
+	    <Switch
+		    android:id="@+id/enable_show_nr_switch"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="1" />
+
+	    <TextView
+                android:id="@+id/enable_show_nr_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:autoLink="all"
+                android:fontFamily="sans-serif-light"
+                android:text="@string/enable_show_nr_text"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/card_show_nr_graph"
+	    android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/card_background"
+            android:orientation="vertical"
+            android:paddingBottom="4dp">
+
+            <TextView
+                android:id="@+id/current_nr_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="sans-serif-thin"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingTop="8dp"
+                android:text="@string/current_nr"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/currspeed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="sans-serif-thin"
+                android:gravity="center_horizontal"
+                android:paddingBottom="8dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:text="NaN MhZ"
+                android:textSize="60sp" />
+
+            <com.echo.holographlibrary.LineGraph
+                android:id="@+id/graph"
+                android:layout_width="match_parent"
+                android:layout_height="120dp" />
+
+            <TextView
+                android:id="@+id/max_nr"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="sans-serif-condensed"
+                android:gravity="center_horizontal"
+                android:paddingBottom="4dp"
+                android:paddingTop="4dp"
+                android:text="@string/max_nr"
+                android:textColor="@color/play_gray"
+                android:textSize="14sp" />
+            <TextView
+                android:id="@+id/min_nr"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="sans-serif-condensed"
+                android:gravity="center_horizontal"
+                android:paddingBottom="4dp"
+                android:paddingTop="4dp"
+                android:text="@string/min_nr"
+                android:textColor="@color/play_gray"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+</LinearLayout>

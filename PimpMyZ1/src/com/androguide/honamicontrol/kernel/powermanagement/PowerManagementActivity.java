@@ -952,8 +952,9 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
         return super.onOptionsItemSelected(item);
     }
     private void showFastHotplugConfig(){
-	    LinearLayout mCardFastPlugNumberCores, mCardFastBoostDuration, mCardFastThresholdBoost, mCardIdleThreshold, mCardScreenOff, mCardInThresholds, mCardInDelays, mCardOutThresholds, mCardOutDelays;
+	    LinearLayout mCardTitle, mCardFastPlugNumberCores, mCardFastBoostDuration, mCardFastThresholdBoost, mCardIdleThreshold, mCardScreenOff, mCardInThresholds, mCardInDelays, mCardOutThresholds, mCardOutDelays;
 
+	    mCardTitle = (LinearLayout) findViewById(R.id.card_fast_hotplug_title);
 	    mCardFastPlugNumberCores = (LinearLayout) findViewById(R.id.card_fast_hotplug_number_of_cores);
 	    mCardFastBoostDuration = (LinearLayout) findViewById(R.id.card_fast_hotplug_boost_duration);
 	    mCardFastThresholdBoost = (LinearLayout) findViewById(R.id.card_fast_hotplug_threshold_to_boost);
@@ -964,6 +965,7 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
 	    mCardOutDelays = (LinearLayout) findViewById(R.id.card_fast_hotplug_out_delay);
 	    mCardScreenOff = (LinearLayout) findViewById(R.id.card_fast_hotplug_screen_off_singlecore);
 
+	    mCardTitle.setVisibility(View.VISIBLE);
 	    mCardFastPlugNumberCores.setVisibility(View.VISIBLE);
 	    mCardFastBoostDuration.setVisibility(View.VISIBLE);
 	    mCardFastThresholdBoost.setVisibility(View.VISIBLE);
@@ -975,8 +977,9 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
 	    mCardScreenOff.setVisibility(View.VISIBLE);
     }
     private void hideFastHotplugConfig(){
-	    LinearLayout mCardFastPlugNumberCores, mCardFastBoostDuration, mCardFastThresholdBoost, mCardIdleThreshold, mCardScreenOff, mCardInThresholds, mCardInDelays, mCardOutThresholds, mCardOutDelays;
+	    LinearLayout mCardTitle, mCardFastPlugNumberCores, mCardFastBoostDuration, mCardFastThresholdBoost, mCardIdleThreshold, mCardScreenOff, mCardInThresholds, mCardInDelays, mCardOutThresholds, mCardOutDelays;
 
+	    mCardTitle = (LinearLayout) findViewById(R.id.card_fast_hotplug_title);
 	    mCardFastPlugNumberCores = (LinearLayout) findViewById(R.id.card_fast_hotplug_number_of_cores);
 	    mCardFastBoostDuration = (LinearLayout) findViewById(R.id.card_fast_hotplug_boost_duration);
 	    mCardFastThresholdBoost = (LinearLayout) findViewById(R.id.card_fast_hotplug_threshold_to_boost);
@@ -987,6 +990,7 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
 	    mCardOutDelays = (LinearLayout) findViewById(R.id.card_fast_hotplug_out_delay);
 	    mCardScreenOff = (LinearLayout) findViewById(R.id.card_fast_hotplug_screen_off_singlecore);
 
+	    mCardTitle.setVisibility(View.GONE);
 	    mCardFastPlugNumberCores.setVisibility(View.GONE);
 	    mCardFastBoostDuration.setVisibility(View.GONE);
 	    mCardFastThresholdBoost.setVisibility(View.GONE);

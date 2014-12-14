@@ -220,6 +220,7 @@ If you really want to apply such a low brightness value, please use the color sl
     <string name="frequency_table">Frequency table</string>
     <string name="pvs_speed">PVS Table:</string>
     <string name="freq_table">Frequency Table:</string>
+    <string name="fast_hotplug_title">Fast hotplug configuration</string>
     <string name="fast_hotplug_number_of_cores">Number of cores</string>
     <string name="fast_hotplug_number_of_cores_text">Defines the minimum and maximum number of cores on screen on.</string>
     <string name="fast_hotplug_number_of_cores_min">Minimum</string>
@@ -243,5 +244,11 @@ If you really want to apply such a low brightness value, please use the color sl
     <string name="fast_hotplug_core1">Core 1</string>
     <string name="fast_hotplug_core2">Core 2</string>
     <string name="fast_hotplug_core3">Core 3</string>
+    <string name="current_nr">Number of tasks running</string>
+    <string name="enable_show_nr">Show number of runing tasks</string>
+    <string name="enable_show_nr_text">Display the number of tasks currently running on the cpu. This should only be used for debuging or configuration purposes.</string>
+    <string name="max_nr">Max nr (last short period): </string>
+    <string name="min_nr">Min nr (last short period): </string>
+
 
 </resources>

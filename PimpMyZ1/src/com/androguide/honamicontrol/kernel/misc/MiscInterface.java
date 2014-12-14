@@ -27,4 +27,8 @@ public interface MiscInterface {
     public static final String FAST_CHARGE_LEVEL = "/sys/kernel/fast_charge/fast_charge_level";
     public static final String AVAILABLE_FAST_CHARGE_LEVELS = "/sys/kernel/fast_charge/available_charge_levels";
     public static final String FAST_CHARGE_VERSION = "/sys/kernel/fast_charge/version";
+    public static final String ENABLE_SHOW_NR = "/sys/module/core/parameters/show_nr_running";
+    public static final String CURRENT_NR = "/sys/module/core/parameters/current_nr_running";
+    public static final String LAST_MAX = "/sys/module/core/parameters/last_max";
+    public static final String LAST_MIN = "/sys/module/core/parameters/last_min";
 }
