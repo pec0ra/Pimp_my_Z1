@@ -48,7 +48,7 @@ public interface PowerManagementInterface {
     public static final String FAST_HOTPLUG_OUT_DELAY_1 = "/sys/module/fast_hotplug/parameters/plug_out_core_1_delay";
     public static final String FAST_HOTPLUG_OUT_DELAY_2 = "/sys/module/fast_hotplug/parameters/plug_out_core_2_delay";
     public static final String FAST_HOTPLUG_OUT_DELAY_3 = "/sys/module/fast_hotplug/parameters/plug_out_core_3_delay";
-//     public static final String FAST_HOTPLUG_ = "/sys/module/fast_hotplug/parameters/";
+    public static final String FAST_HOTPLUG_REFRESH_RATE = "/sys/module/fast_hotplug/parameters/refresh_rate";
     public static final String POWER_SUSPEND_TOGGLE = "/sys/kernel/power_suspend/power_suspend_mode";
 }
 

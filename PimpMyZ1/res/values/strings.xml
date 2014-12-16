@@ -221,6 +221,8 @@ If you really want to apply such a low brightness value, please use the color sl
     <string name="pvs_speed">PVS Table:</string>
     <string name="freq_table">Frequency Table:</string>
     <string name="fast_hotplug_title">Fast hotplug configuration</string>
+    <string name="fast_hotplug_refresh_rate">Refresh rate</string>
+    <string name="fast_hotplug_refresh_rate_text">The duration in milliseconds of a fast hotplug cycle</string>
     <string name="fast_hotplug_number_of_cores">Number of cores</string>
     <string name="fast_hotplug_number_of_cores_text">Defines the minimum and maximum number of cores on screen on.</string>
     <string name="fast_hotplug_number_of_cores_min">Minimum</string>

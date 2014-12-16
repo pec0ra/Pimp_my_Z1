@@ -39,12 +39,13 @@ import com.androguide.honamicontrol.R;
 import com.androguide.honamicontrol.helpers.CMDProcessor.CMDProcessor;
 import com.androguide.honamicontrol.helpers.CPUHelper;
 import com.androguide.honamicontrol.helpers.Helpers;
+import com.androguide.honamicontrol.kernel.cpucontrol.CPUInterface;
 
 import java.util.ArrayList;
 
 public class PowerManagementActivity extends ActionBarActivity implements PowerManagementInterface {
 
-    private int spinnerCounter = 0, ecoCoresCounter = 0, alucardCoresCounter = 0, hotplugCounter = 0, minCounter = 0, maxCounter = 0, boostCounter = 0, thresholdBoostCounter = 0, idleCounter = 0, inThresholdCounter1 = 0, inThresholdCounter2 = 0, inThresholdCounter3 = 0, inDelayCounter1 = 0, inDelayCounter2 = 0, inDelayCounter3 = 0, outThresholdCounter1 = 0, outThresholdCounter2 = 0, outThresholdCounter3 = 0, outDelayCounter1 = 0, outDelayCounter2 = 0, outDelayCounter3 = 0;
+    private int spinnerCounter = 0, ecoCoresCounter = 0, alucardCoresCounter = 0, hotplugCounter = 0, refreshCounter = 0, minCounter = 0, maxCounter = 0, boostCounter = 0, thresholdBoostCounter = 0, idleCounter = 0, inThresholdCounter1 = 0, inThresholdCounter2 = 0, inThresholdCounter3 = 0, inDelayCounter1 = 0, inDelayCounter2 = 0, inDelayCounter3 = 0, outThresholdCounter1 = 0, outThresholdCounter2 = 0, outThresholdCounter3 = 0, outDelayCounter1 = 0, outDelayCounter2 = 0, outDelayCounter3 = 0;
     private Boolean isIntelliPlugOn;
     private LinearLayout mCardIntelliEco, mCardIntelliCores, mCardAlucardCores;
     private Spinner mEcoCoresSpinner;
@@ -53,6 +54,7 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
     private Boolean hasMsmMpdecision = false;
     private Boolean hasFastHotplug = false;
     private ArrayList<Integer> driverNumbers = new ArrayList<Integer>();
+    private SharedPreferences bootPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +63,7 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setIcon(getResources().getDrawable(R.drawable.ic_tools_power_management));
         setContentView(R.layout.card_power_management);
-        final SharedPreferences bootPrefs = getSharedPreferences("BOOT_PREFS", 0);
+        bootPrefs = getSharedPreferences("BOOT_PREFS", 0);
 
         mCardIntelliEco = (LinearLayout) findViewById(R.id.card_intelliplug_eco_mode);
         mCardIntelliCores = (LinearLayout) findViewById(R.id.card_intelliplug_eco_cores);
@@ -205,6 +207,7 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
 				if(hasFastHotplug)
 					CMDProcessor.runSuCommand("echo 0 > " + FAST_HOTPLUG_TOGGLE);
 				CMDProcessor.runSuCommand("stop mpdecision");
+				resetCPUMinFreq();
 				CMDProcessor.runSuCommand("echo 1 > " + INTELLI_PLUG_TOGGLE);
 			} else hotplugCounter++;
 			break;
@@ -223,6 +226,7 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
 				if(hasFastHotplug)
 					CMDProcessor.runSuCommand("echo 0 > " + FAST_HOTPLUG_TOGGLE);
 				CMDProcessor.runSuCommand("stop mpdecision");
+				resetCPUMinFreq();
 				CMDProcessor.runSuCommand("echo 1 > " + ALUCARD_HOTPLUG_TOGGLE);
 			} else hotplugCounter++;
 
@@ -240,6 +244,7 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
 				if(hasFastHotplug)
 					CMDProcessor.runSuCommand("echo 0 > " + FAST_HOTPLUG_TOGGLE);
 				CMDProcessor.runSuCommand("stop mpdecision");
+				resetCPUMinFreq();
 				CMDProcessor.runSuCommand("echo 1 > " + MSM_MPDECISION_TOGGLE);
 
 			} else hotplugCounter++;
@@ -259,6 +264,7 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
 				if(hasMsmMpdecision)
 					CMDProcessor.runSuCommand("echo 0 > " + MSM_MPDECISION_TOGGLE);
 				CMDProcessor.runSuCommand("stop mpdecision");
+				resetCPUMinFreq();
 				CMDProcessor.runSuCommand("echo 1 > " + FAST_HOTPLUG_TOGGLE);
 
 			} else hotplugCounter++;
@@ -277,6 +283,42 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
 
 	// Smart hotplug controls
 	if(Helpers.doesFileExist(FAST_HOTPLUG_TOGGLE)){
+
+
+		Spinner fastHotplugRefreshRate = (Spinner) findViewById(R.id.fast_hotplug_refresh_rate_spinner);
+		ArrayList<String> timeLevels = new ArrayList<String>();
+
+		for(int i = 0; i <= 1000; i+=10){
+			timeLevels.add(String.valueOf(i));
+		}
+		ArrayAdapter<String> refreshRateAdapter = new ArrayAdapter<String>(this, R.layout.spinner_row, timeLevels);
+		fastHotplugRefreshRate.setAdapter(refreshRateAdapter);
+		int refreshRate = Integer.parseInt(CPUHelper.readOneLineNotRoot(FAST_HOTPLUG_REFRESH_RATE)) / 10;
+		if(refreshRate < 0)
+			refreshRate = 0;
+		if(refreshRate > 100)
+			refreshRate = 100;	
+		fastHotplugRefreshRate.setSelection(refreshRate);
+
+		fastHotplugRefreshRate.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				int toApply = position * 10;
+				if (refreshCounter > 0) {
+					Helpers.CMDProcessorWrapper.runSuCommand("busybox echo " + toApply + " > " + FAST_HOTPLUG_REFRESH_RATE);
+					bootPrefs.edit().putInt("FAST_HOTPLUG_REFRESH_RATE", toApply).commit();
+				} else {
+					refreshCounter++;
+				}
+			}
+
+		@Override
+		public void onNothingSelected(AdapterView<?> parent) {
+
+		}
+		});
+
+
 		Spinner fastHotplugMinCoresSpinner = (Spinner) findViewById(R.id.fast_hotplug_min_cores_spinner);
 		Spinner fastHotplugMaxCoresSpinner = (Spinner) findViewById(R.id.fast_hotplug_max_cores_spinner);
 		ArrayList<String> minMaxCores = new ArrayList<String>();
@@ -341,7 +383,7 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
 		Spinner fastHotplugBoostDuration = (Spinner) findViewById(R.id.fast_hotplug_boost_duration_spinner);
 		ArrayList<String> loadLevels = new ArrayList<String>();
 
-		for(int i = 0; i <= 10000; i+=100){
+		for(int i = 0; i <= 20000; i+=100){
 			loadLevels.add(String.valueOf(i));
 		}
 		ArrayAdapter<String> boostDurationAdapter = new ArrayAdapter<String>(this, R.layout.spinner_row, loadLevels);
@@ -349,8 +391,8 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
 		int boostDuration = Integer.parseInt(CPUHelper.readOneLineNotRoot(FAST_HOTPLUG_BOOST_DURATION)) / 100;
 		if(boostDuration < 0)
 			boostDuration = 0;
-		if(boostDuration > 100)
-			boostDuration = 100;	
+		if(boostDuration > 200)
+			boostDuration = 200;	
 		fastHotplugBoostDuration.setSelection(boostDuration);
 
 		fastHotplugBoostDuration.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -378,8 +420,8 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
 		int thresholdBoost = Integer.parseInt(CPUHelper.readOneLineNotRoot(FAST_HOTPLUG_THRESHOLD_TO_BOOST)) / 100;
 		if(thresholdBoost < 0)
 			thresholdBoost = 0;
-		if(thresholdBoost > 100)
-			thresholdBoost = 100;	
+		if(thresholdBoost > 200)
+			thresholdBoost = 200;	
 		fastHotplugThresholdToBoost.setSelection(thresholdBoost);
 
 		fastHotplugThresholdToBoost.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -408,8 +450,8 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
 		int idleThreshold = Integer.parseInt(CPUHelper.readOneLineNotRoot(FAST_HOTPLUG_IDLE_THRESHOLD)) / 100;
 		if(idleThreshold < 0)
 			idleThreshold = 0;
-		if(idleThreshold > 100)
-			idleThreshold = 100;	
+		if(idleThreshold > 200)
+			idleThreshold = 200;	
 		fastHotplugIdleThreshold.setSelection(idleThreshold);
 
 		fastHotplugIdleThreshold.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -464,8 +506,8 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
 		int inThreshold2 = Integer.parseInt(CPUHelper.readOneLineNotRoot(FAST_HOTPLUG_IN_THRESHOLD_2)) / 100;
 		if(inThreshold2 < 0)
 			inThreshold2 = 0;
-		if(inThreshold2 > 100)
-			inThreshold2 = 100;	
+		if(inThreshold2 > 200)
+			inThreshold2 = 200;	
 		fastHotplugInThreshold2.setSelection(inThreshold2);
 
 		fastHotplugInThreshold2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -493,8 +535,8 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
 		int inThreshold3 = Integer.parseInt(CPUHelper.readOneLineNotRoot(FAST_HOTPLUG_IN_THRESHOLD_3)) / 100;
 		if(inThreshold3 < 0)
 			inThreshold3 = 0;
-		if(inThreshold3 > 100)
-			inThreshold3 = 100;	
+		if(inThreshold3 > 200)
+			inThreshold3 = 200;	
 		fastHotplugInThreshold3.setSelection(inThreshold3);
 
 		fastHotplugInThreshold3.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -522,8 +564,8 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
 		int inThreshold1 = Integer.parseInt(CPUHelper.readOneLineNotRoot(FAST_HOTPLUG_IN_THRESHOLD_1)) / 100;
 		if(inThreshold1 < 0)
 			inThreshold1 = 0;
-		if(inThreshold1 > 100)
-			inThreshold1 = 100;	
+		if(inThreshold1 > 200)
+			inThreshold1 = 200;	
 		fastHotplugInThreshold1.setSelection(inThreshold1);
 
 		fastHotplugInThreshold1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -653,8 +695,8 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
 		int outThreshold2 = Integer.parseInt(CPUHelper.readOneLineNotRoot(FAST_HOTPLUG_OUT_THRESHOLD_2)) / 100;
 		if(outThreshold2 < 0)
 			outThreshold2 = 0;
-		if(outThreshold2 > 100)
-			outThreshold2 = 100;	
+		if(outThreshold2 > 200)
+			outThreshold2 = 200;	
 		fastHotplugOutThreshold2.setSelection(outThreshold2);
 
 		fastHotplugOutThreshold2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -682,8 +724,8 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
 		int outThreshold3 = Integer.parseInt(CPUHelper.readOneLineNotRoot(FAST_HOTPLUG_OUT_THRESHOLD_3)) / 100;
 		if(outThreshold3 < 0)
 			outThreshold3 = 0;
-		if(outThreshold3 > 100)
-			outThreshold3 = 100;	
+		if(outThreshold3 > 200)
+			outThreshold3 = 200;	
 		fastHotplugOutThreshold3.setSelection(outThreshold3);
 
 		fastHotplugOutThreshold3.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -711,8 +753,8 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
 		int outThreshold1 = Integer.parseInt(CPUHelper.readOneLineNotRoot(FAST_HOTPLUG_OUT_THRESHOLD_1)) / 100;
 		if(outThreshold1 < 0)
 			outThreshold1 = 0;
-		if(outThreshold1 > 100)
-			outThreshold1 = 100;	
+		if(outThreshold1 > 200)
+			outThreshold1 = 200;	
 		fastHotplugOutThreshold1.setSelection(outThreshold1);
 
 		fastHotplugOutThreshold1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -952,9 +994,10 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
         return super.onOptionsItemSelected(item);
     }
     private void showFastHotplugConfig(){
-	    LinearLayout mCardTitle, mCardFastPlugNumberCores, mCardFastBoostDuration, mCardFastThresholdBoost, mCardIdleThreshold, mCardScreenOff, mCardInThresholds, mCardInDelays, mCardOutThresholds, mCardOutDelays;
+	    LinearLayout mCardTitle, mCardFastRefresh, mCardFastPlugNumberCores, mCardFastBoostDuration, mCardFastThresholdBoost, mCardIdleThreshold, mCardScreenOff, mCardInThresholds, mCardInDelays, mCardOutThresholds, mCardOutDelays;
 
 	    mCardTitle = (LinearLayout) findViewById(R.id.card_fast_hotplug_title);
+	    mCardFastRefresh = (LinearLayout) findViewById(R.id.card_fast_hotplug_refresh_rate);
 	    mCardFastPlugNumberCores = (LinearLayout) findViewById(R.id.card_fast_hotplug_number_of_cores);
 	    mCardFastBoostDuration = (LinearLayout) findViewById(R.id.card_fast_hotplug_boost_duration);
 	    mCardFastThresholdBoost = (LinearLayout) findViewById(R.id.card_fast_hotplug_threshold_to_boost);
@@ -966,6 +1009,7 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
 	    mCardScreenOff = (LinearLayout) findViewById(R.id.card_fast_hotplug_screen_off_singlecore);
 
 	    mCardTitle.setVisibility(View.VISIBLE);
+	    mCardFastRefresh.setVisibility(View.VISIBLE);
 	    mCardFastPlugNumberCores.setVisibility(View.VISIBLE);
 	    mCardFastBoostDuration.setVisibility(View.VISIBLE);
 	    mCardFastThresholdBoost.setVisibility(View.VISIBLE);
@@ -977,9 +1021,10 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
 	    mCardScreenOff.setVisibility(View.VISIBLE);
     }
     private void hideFastHotplugConfig(){
-	    LinearLayout mCardTitle, mCardFastPlugNumberCores, mCardFastBoostDuration, mCardFastThresholdBoost, mCardIdleThreshold, mCardScreenOff, mCardInThresholds, mCardInDelays, mCardOutThresholds, mCardOutDelays;
+	    LinearLayout mCardTitle, mCardFastRefresh, mCardFastPlugNumberCores, mCardFastBoostDuration, mCardFastThresholdBoost, mCardIdleThreshold, mCardScreenOff, mCardInThresholds, mCardInDelays, mCardOutThresholds, mCardOutDelays;
 
 	    mCardTitle = (LinearLayout) findViewById(R.id.card_fast_hotplug_title);
+	    mCardFastRefresh = (LinearLayout) findViewById(R.id.card_fast_hotplug_refresh_rate);
 	    mCardFastPlugNumberCores = (LinearLayout) findViewById(R.id.card_fast_hotplug_number_of_cores);
 	    mCardFastBoostDuration = (LinearLayout) findViewById(R.id.card_fast_hotplug_boost_duration);
 	    mCardFastThresholdBoost = (LinearLayout) findViewById(R.id.card_fast_hotplug_threshold_to_boost);
@@ -991,6 +1036,7 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
 	    mCardScreenOff = (LinearLayout) findViewById(R.id.card_fast_hotplug_screen_off_singlecore);
 
 	    mCardTitle.setVisibility(View.GONE);
+	    mCardFastRefresh.setVisibility(View.GONE);
 	    mCardFastPlugNumberCores.setVisibility(View.GONE);
 	    mCardFastBoostDuration.setVisibility(View.GONE);
 	    mCardFastThresholdBoost.setVisibility(View.GONE);
@@ -1001,5 +1047,11 @@ public class PowerManagementActivity extends ActionBarActivity implements PowerM
 	    mCardOutDelays.setVisibility(View.GONE);
 	    mCardScreenOff.setVisibility(View.GONE);
 	    }
+    private void resetCPUMinFreq(){
+	    for(int i=0; i < 4; i++){
+		    Helpers.CMDProcessorWrapper.runSuCommand("busybox echo " + bootPrefs.getString("PER_CORE_GOV", "300000") + " > "
+				    + CPUInterface.MIN_FREQ.replace("cpu0", "cpu" + i));
+	    }
+    }
 
 }
